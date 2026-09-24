@@ -16,6 +16,9 @@ esp_err_t fan_control_set_duty_pct(uint8_t duty_pct);
 /* Returns the last applied duty percentage. */
 uint8_t fan_control_get_duty_pct(void);
 
+/* Returns the last measured fan speed in RPM (from the tachometer signal). */
+uint16_t fan_control_get_rpm(void);
+
 #ifdef __cplusplus
 }
 #endif

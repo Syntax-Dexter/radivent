@@ -1,5 +1,5 @@
 idf_component_register(
     SRCS "sensors.c"
     INCLUDE_DIRS "include"
-    REQUIRES esp_adc
+    REQUIRES esp_adc esp_driver_i2c board_config
 )

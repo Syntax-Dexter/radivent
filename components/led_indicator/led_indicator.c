@@ -1,5 +1,5 @@
 #include "led_indicator.h"
-#include "sdkconfig.h"
+#include "board_config.h"
 #include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -10,7 +10,7 @@ static volatile led_pattern_t s_pattern = LED_PATTERN_SLOW_BLINK;
 
 static inline void led_write(int level)
 {
-    gpio_set_level(CONFIG_FANCTRL_LED_GPIO, level);
+    gpio_set_level(STATUS_LED_GPIO, level);
 }
 
 static void led_task(void *arg)
@@ -50,7 +50,7 @@ static void led_task(void *arg)
 esp_err_t led_indicator_init(void)
 {
     gpio_config_t io_cfg = {
-        .pin_bit_mask = 1ULL << CONFIG_FANCTRL_LED_GPIO,
+        .pin_bit_mask = 1ULL << STATUS_LED_GPIO,
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
         .pull_down_en = GPIO_PULLDOWN_DISABLE,
@@ -68,7 +68,7 @@ esp_err_t led_indicator_init(void)
         return ESP_FAIL;
     }
 
-    ESP_LOGI(TAG, "LED indicator initialized on GPIO%d", CONFIG_FANCTRL_LED_GPIO);
+    ESP_LOGI(TAG, "LED indicator initialized on GPIO%d", STATUS_LED_GPIO);
     return ESP_OK;
 }
 

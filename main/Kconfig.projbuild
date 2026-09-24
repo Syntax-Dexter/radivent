@@ -1,33 +1,5 @@
 menu "Radiator Fan Controller"
 
-    menu "GPIO / Pin Mapping"
-        config FANCTRL_NTC1_ADC_CHANNEL
-            int "NTC #1 ADC1 channel"
-            range 0 6
-            default 0
-            help
-                ADC1 channel used for the first NTC thermistor divider (ADC1 CH0 = GPIO0 on ESP32-C6).
-
-        config FANCTRL_NTC2_ADC_CHANNEL
-            int "NTC #2 ADC1 channel"
-            range 0 6
-            default 1
-            help
-                ADC1 channel used for the second NTC thermistor divider (ADC1 CH1 = GPIO1 on ESP32-C6).
-
-        config FANCTRL_PWM_GPIO
-            int "Fan MOSFET gate PWM GPIO"
-            default 4
-            help
-                GPIO driving the gate of the N-channel MOSFET that switches the fan.
-
-        config FANCTRL_LED_GPIO
-            int "Status LED GPIO"
-            default 15
-            help
-                GPIO driving the single status LED (no RGB).
-    endmenu
-
     menu "NTC Thermistor Parameters"
         config FANCTRL_NTC_NOMINAL_OHM
             int "NTC nominal resistance (ohm @ 25C)"

@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include "sensors.h"
+#include "board_config.h"
 #include "sdkconfig.h"
 #include "esp_log.h"
 #include "esp_adc/adc_oneshot.h"
@@ -18,14 +19,38 @@ static const char *TAG = "sensors";
 #define NTC_SERIES_OHM           CONFIG_FANCTRL_NTC_SERIES_OHM
 #define NTC_NOMINAL_TEMP_K       298.15f /* 25 C */
 
+#define I2C_BUS_PORT             I2C_NUM_0
+#define I2C_BUS_FREQ_HZ          100000
+
 static adc_oneshot_unit_handle_t s_adc_handle;
 static adc_cali_handle_t s_cali_handle;
 static bool s_cali_enabled;
+static i2c_master_bus_handle_t s_i2c_bus;
 
+/* ADC1 channel N corresponds to GPIO N (0-6) on ESP32-C6. */
 static const adc_channel_t s_channels[2] = {
-    (adc_channel_t)CONFIG_FANCTRL_NTC1_ADC_CHANNEL,
-    (adc_channel_t)CONFIG_FANCTRL_NTC2_ADC_CHANNEL,
+    (adc_channel_t)NTC1_ADC_GPIO,
+    (adc_channel_t)NTC2_ADC_GPIO,
 };
+
+static esp_err_t i2c_bus_init(void)
+{
+    i2c_master_bus_config_t bus_cfg = {
+        .i2c_port = I2C_BUS_PORT,
+        .sda_io_num = I2C_SDA_GPIO,
+        .scl_io_num = I2C_SCL_GPIO,
+        .clk_source = I2C_CLK_SRC_DEFAULT,
+        .glitch_ignore_cnt = 7,
+        .flags.enable_internal_pullup = true,
+    };
+    esp_err_t err = i2c_new_master_bus(&bus_cfg, &s_i2c_bus);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "i2c_new_master_bus failed: %s", esp_err_to_name(err));
+        return err;
+    }
+    ESP_LOGI(TAG, "I2C bus ready on SDA=GPIO%d SCL=GPIO%d", I2C_SDA_GPIO, I2C_SCL_GPIO);
+    return ESP_OK;
+}
 
 static float adc_mv_to_temp_c(int mv)
 {
@@ -74,8 +99,18 @@ esp_err_t sensors_init(void)
         ESP_LOGW(TAG, "ADC calibration unavailable, using raw scaling");
     }
 
-    ESP_LOGI(TAG, "Sensors initialized (NTC1 ch%d, NTC2 ch%d)", s_channels[0], s_channels[1]);
+    err = i2c_bus_init();
+    if (err != ESP_OK) {
+        return err;
+    }
+
+    ESP_LOGI(TAG, "Sensors initialized (NTC1 GPIO%d, NTC2 GPIO%d)", NTC1_ADC_GPIO, NTC2_ADC_GPIO);
     return ESP_OK;
+}
+
+i2c_master_bus_handle_t sensors_i2c_bus_handle(void)
+{
+    return s_i2c_bus;
 }
 
 static esp_err_t read_channel_mv(adc_channel_t chan, int *mv_out)
