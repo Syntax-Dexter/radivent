@@ -1,6 +1,7 @@
 # Radiator Fan Controller
 
 A compact ESP32-based controller for automatically controlling radiator fans based on temperature.
+This will improve 
 
 The board is designed around the **ESP32-C6-WROOM-1** and supports PWM PC fans such as the **Arctic P120/P80 PST PWM**, including daisy-chained fan configurations.
 
@@ -21,6 +22,25 @@ The board is designed around the **ESP32-C6-WROOM-1** and supports PWM PC fans s
 * USB-C connection for programming and development
 * On-board 3.3 V power supply
 * Status LEDs and user/reset/boot controls
+
+## Why Use Radiator Fans?
+
+Adding low-speed fans to a radiator increases airflow across the radiator surface and improves heat transfer into the room.
+
+This can allow the radiator to deliver the required room heating output at a lower water temperature than with natural convection alone.
+
+For heat-pump systems, lower supply-water temperatures are especially useful because a smaller temperature lift generally improves heat-pump efficiency and can increase the system's Coefficient of Performance (COP).
+
+The goal of this controller is therefore not only to increase radiator output, but also to run the fans only as fast as necessary. This helps balance:
+
+Higher radiator heat output
+Lower heating-water temperatures
+Improved heat-pump efficiency and COP
+Lower fan noise
+Low electrical consumption
+
+The actual efficiency improvement depends on the radiator, airflow, room conditions, heating curve and heat-pump installation.
+
 
 ## Fan Control
 
