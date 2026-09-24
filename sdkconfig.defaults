@@ -1,0 +1,37 @@
+# Target
+CONFIG_IDF_TARGET="esp32c6"
+
+# --- Flash / Partitions (8MB, custom 2-slot OTA table) ---
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_PARTITION_TABLE_OFFSET=0x8000
+
+# --- OTA ---
+CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y
+CONFIG_APP_ROLLBACK_ENABLE=y
+
+# --- Console / Programming ---
+# Primary programming + console: native USB-Serial-JTAG.
+# Secondary programming path is always available via the UART0 RX/TX pins
+# (esptool auto-detects UART if USB-JTAG is not present), no extra config needed.
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+CONFIG_ESP_CONSOLE_SECONDARY_NONE=y
+
+# --- Wi-Fi (AP + STA) ---
+CONFIG_ESP_WIFI_SOFTAP_SUPPORT=y
+
+# --- mbedTLS / HTTPS OTA ---
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE=y
+
+# --- Thread (OpenThread) support on ESP32-C6 ---
+CONFIG_OPENTHREAD_ENABLED=n
+
+# --- IEEE802.15.4 radio shared by Zigbee/Thread ---
+CONFIG_IEEE802154_ENABLED=y
+
+# --- LWIP ---
+CONFIG_LWIP_IPV6=y
+
+# --- FreeRTOS ---
+CONFIG_FREERTOS_HZ=1000

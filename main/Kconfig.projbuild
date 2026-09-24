@@ -1,0 +1,78 @@
+menu "Radiator Fan Controller"
+
+    menu "GPIO / Pin Mapping"
+        config FANCTRL_NTC1_ADC_CHANNEL
+            int "NTC #1 ADC1 channel"
+            range 0 6
+            default 0
+            help
+                ADC1 channel used for the first NTC thermistor divider (ADC1 CH0 = GPIO0 on ESP32-C6).
+
+        config FANCTRL_NTC2_ADC_CHANNEL
+            int "NTC #2 ADC1 channel"
+            range 0 6
+            default 1
+            help
+                ADC1 channel used for the second NTC thermistor divider (ADC1 CH1 = GPIO1 on ESP32-C6).
+
+        config FANCTRL_PWM_GPIO
+            int "Fan MOSFET gate PWM GPIO"
+            default 4
+            help
+                GPIO driving the gate of the N-channel MOSFET that switches the fan.
+
+        config FANCTRL_LED_GPIO
+            int "Status LED GPIO"
+            default 15
+            help
+                GPIO driving the single status LED (no RGB).
+    endmenu
+
+    menu "NTC Thermistor Parameters"
+        config FANCTRL_NTC_NOMINAL_OHM
+            int "NTC nominal resistance (ohm @ 25C)"
+            default 10000
+
+        config FANCTRL_NTC_BETA
+            int "NTC beta coefficient"
+            default 3950
+
+        config FANCTRL_NTC_SERIES_OHM
+            int "Divider series resistor (ohm)"
+            default 10000
+    endmenu
+
+    menu "Wireless Features"
+        config FANCTRL_ENABLE_ESPNOW
+            bool "Enable ESP-NOW"
+            default y
+
+        config FANCTRL_ENABLE_MQTT
+            bool "Enable MQTT client"
+            default y
+
+        config FANCTRL_ENABLE_ZIGBEE
+            bool "Enable Zigbee (requires espressif/esp-zigbee-lib managed component)"
+            default n
+            help
+                Requires adding the managed component in main/idf_component.yml:
+                  espressif/esp-zigbee-lib
+                and enabling CONFIG_ZB_ENABLED via the Zigbee component's own Kconfig.
+
+        config FANCTRL_ENABLE_THREAD
+            bool "Enable Thread (OpenThread)"
+            default n
+            help
+                Also requires CONFIG_OPENTHREAD_ENABLED=y (see sdkconfig.defaults) and the
+                "openthread" component to be part of the build.
+    endmenu
+
+    config FANCTRL_AP_SSID
+        string "Default SoftAP SSID"
+        default "FanController-Setup"
+
+    config FANCTRL_AP_PASSWORD
+        string "Default SoftAP password"
+        default "fanctrl123"
+
+endmenu
