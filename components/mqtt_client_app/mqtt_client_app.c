@@ -86,6 +86,10 @@ static void publish_discovery_configs(void)
                               "{{ value_json.ntc2_c }}", "\xC2\xB0" "C", "temperature");
     publish_discovery_sensor("fan_rpm", "Fan Controller Fan Speed",
                               "{{ value_json.fan_rpm }}", "RPM", NULL);
+    publish_discovery_sensor("wifi_rssi", "Fan Controller Wi-Fi RSSI",
+                              "{{ value_json.wifi_rssi_dbm }}", "dBm", "signal_strength");
+    publish_discovery_sensor("wifi_snr", "Fan Controller Wi-Fi SNR",
+                              "{{ value_json.wifi_snr_db }}", "dB", NULL);
 }
 
 static void mqtt_event_handler(void *arg, esp_event_base_t base, int32_t event_id, void *event_data)
@@ -201,12 +205,24 @@ esp_err_t mqtt_client_app_publish_state(void)
         return err;
     }
 
-    char payload[192];
-    int n = snprintf(payload, sizeof(payload),
-                      "{\"ntc1_c\":%.1f,\"ntc2_c\":%.1f,\"fan_pct\":%u,\"fan_rpm\":%u}",
-                      reading.ntc1_temp_c, reading.ntc2_temp_c, fan_control_get_duty_pct(),
-                      fan_control_get_rpm());
-    esp_mqtt_client_publish(s_client, TOPIC_STATE, payload, n, 0, false);
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "ntc1_c", reading.ntc1_temp_c);
+    cJSON_AddNumberToObject(root, "ntc2_c", reading.ntc2_temp_c);
+    cJSON_AddNumberToObject(root, "fan_pct", fan_control_get_duty_pct());
+    cJSON_AddNumberToObject(root, "fan_rpm", fan_control_get_rpm());
+
+    int8_t rssi_dbm;
+    if (wifi_manager_get_rssi(&rssi_dbm) == ESP_OK) {
+        cJSON_AddNumberToObject(root, "wifi_rssi_dbm", rssi_dbm);
+        cJSON_AddNumberToObject(root, "wifi_snr_db", rssi_dbm - WIFI_ASSUMED_NOISE_FLOOR_DBM);
+    }
+
+    char *payload = cJSON_PrintUnformatted(root);
+    if (payload) {
+        esp_mqtt_client_publish(s_client, TOPIC_STATE, payload, 0, 0, false);
+        cJSON_free(payload);
+    }
+    cJSON_Delete(root);
     return ESP_OK;
 }
 

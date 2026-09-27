@@ -73,3 +73,17 @@ bool wifi_manager_is_sta_connected(void)
 {
     return s_sta_connected;
 }
+
+esp_err_t wifi_manager_get_rssi(int8_t *rssi_dbm)
+{
+    if (!s_sta_connected || !rssi_dbm) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    wifi_ap_record_t ap_info;
+    esp_err_t err = esp_wifi_sta_get_ap_info(&ap_info);
+    if (err != ESP_OK) {
+        return err;
+    }
+    *rssi_dbm = ap_info.rssi;
+    return ESP_OK;
+}
