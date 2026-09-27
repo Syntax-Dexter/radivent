@@ -33,5 +33,6 @@
     "--query-driver=**",
     "--compile-commands-dir=/home/jelle/sample_project/build"
   ],
-  "idf.flashType": "JTAG"
+  "idf.flashType": "JTAG",
+  "idf.monitorPort": "/dev/ttyACM0"
 }
