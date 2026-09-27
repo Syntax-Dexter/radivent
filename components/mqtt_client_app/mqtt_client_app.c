@@ -6,6 +6,7 @@
 #include "app_config.h"
 #include "sensors.h"
 #include "fan_control.h"
+#include "rgb_led.h"
 #include "mqtt_client.h"
 #include "esp_log.h"
 #include "esp_mac.h"
@@ -99,6 +100,7 @@ static void mqtt_event_handler(void *arg, esp_event_base_t base, int32_t event_i
     case MQTT_EVENT_CONNECTED:
         s_connected = true;
         ESP_LOGI(TAG, "MQTT connected");
+        rgb_led_flash(0, 0, 255, 3);
         esp_mqtt_client_subscribe(s_client, TOPIC_CMD_FAN, 0);
         publish_discovery_configs();
         esp_mqtt_client_publish(s_client, TOPIC_AVAIL, "online", 0, 1, true);

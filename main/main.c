@@ -8,6 +8,7 @@
 #include "sensors.h"
 #include "fan_control.h"
 #include "led_indicator.h"
+#include "rgb_led.h"
 #include "wifi_manager.h"
 #include "web_server.h"
 #include "ota_manager.h"
@@ -55,6 +56,7 @@ void app_main(void)
 
     ESP_ERROR_CHECK(app_config_init());
     ESP_ERROR_CHECK(led_indicator_init());
+    ESP_ERROR_CHECK(rgb_led_init());
     ESP_ERROR_CHECK(sensors_init());
     ESP_ERROR_CHECK(fan_control_init());
     ESP_ERROR_CHECK(wifi_manager_init());

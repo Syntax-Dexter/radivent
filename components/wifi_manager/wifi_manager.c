@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include "wifi_manager.h"
 #include "app_config.h"
+#include "rgb_led.h"
 #include "esp_wifi.h"
 #include "esp_netif.h"
 #include "esp_event.h"
@@ -22,6 +23,7 @@ static void event_handler(void *arg, esp_event_base_t base, int32_t id, void *da
     } else if (base == IP_EVENT && id == IP_EVENT_STA_GOT_IP) {
         s_sta_connected = true;
         ESP_LOGI(TAG, "STA got IP");
+        rgb_led_flash(0, 255, 0, 3);
     }
 }
 

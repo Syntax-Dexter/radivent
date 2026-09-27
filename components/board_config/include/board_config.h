@@ -12,3 +12,4 @@
 #define UART_RX_GPIO         17
 #define FAN_PWM_GPIO         18
 #define TACH_READ_GPIO       20
+#define RGB_LED_GPIO         8
